@@ -2,21 +2,21 @@
 
 const webpack = require('webpack');
 const path = require('path');
-const TerserPlugin = require("terser-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     mode: 'production',
     watch: false,
     context: `${__dirname}/src/plugin/`,
     entry: {
-        CustomPlugin: './main.js',
-        'CustomPlugin.min': './main.js'
+      A11ySoundPlugin: './main.js',
+      'A11ySoundPlugin.min': './main.js'
     },
 
     output: {
         path: `${__dirname}/dist/`,
         filename: '[name].js',
-        library: 'CustomPlugin',
+        library: 'A11ySoundPlugin',
         libraryTarget: 'umd',
         umdNamedDefine: true
     },

@@ -1,4 +1,6 @@
-export default class CustomPlugin extends Phaser.Plugins.ScenePlugin {
+import {Sound, Plugins} from "phaser";
+
+export default class A11ySoundPlugin extends Plugins.ScenePlugin {
     constructor(scene, pluginManager) {
         super(scene, pluginManager);
         this.scene = scene;
@@ -12,31 +14,32 @@ export default class CustomPlugin extends Phaser.Plugins.ScenePlugin {
     //  Called when the Plugin is booted by the PluginManager.
     //  If you need to reference other systems in the Scene (like the Loader or DisplayList) then set-up those references now, not in the constructor.
     boot() {
-        let eventEmitter = this.systems.events;
-        eventEmitter.on('update', this.update, this);
-        this.text = this.scene.add.text(100, 200, 'Phaser', {
-            fontFamily: 'Arial',
-            fontSize: 64,
-            color: '#00ff00'
-        });
+      this._registerSoundChannels();
+      let eventEmitter = this.systems.events;
+      eventEmitter.on('update', this.update, this);
+      this.text = this.scene.add.text(100, 200, 'Phaser', {
+          fontFamily: 'Arial',
+          fontSize: 64,
+          color: '#00ff00'
+      });
 
-        /*
-            List of unused eventEmitters to activate matching methods of this plugin
-        */
+      /*
+          List of unused eventEmitters to activate matching methods of this plugin
+      */
 
-        //eventEmitter.on('start', this.start, this);
+      //eventEmitter.on('start', this.start, this);
 
-        //eventEmitter.on('preupdate', this.preUpdate, this);
-        //eventEmitter.on('postupdate', this.postUpdate, this);
+      //eventEmitter.on('preupdate', this.preUpdate, this);
+      //eventEmitter.on('postupdate', this.postUpdate, this);
 
-        //eventEmitter.on('pause', this.pause, this);
-        //eventEmitter.on('resume', this.resume, this);
+      //eventEmitter.on('pause', this.pause, this);
+      //eventEmitter.on('resume', this.resume, this);
 
-        //eventEmitter.on('sleep', this.sleep, this);
-        //eventEmitter.on('wake', this.wake, this);
+      //eventEmitter.on('sleep', this.sleep, this);
+      //eventEmitter.on('wake', this.wake, this);
 
-        //eventEmitter.on('shutdown', this.shutdown, this);
-        //eventEmitter.on('destroy', this.destroy, this);*/
+      //eventEmitter.on('shutdown', this.shutdown, this);
+      //eventEmitter.on('destroy', this.destroy, this);*/
     }
 
     //  Called when a Scene is started by the SceneManager. The Scene is now active, visible and running.
@@ -92,5 +95,19 @@ export default class CustomPlugin extends Phaser.Plugins.ScenePlugin {
     reset() {
         this.counter = 0;
         this.text.setText(0);
+    }
+
+    _registerSoundChannels () {
+      if(this.game.sound && !this.game.sound.hasOwnProperty("sfx")) {
+        this.game.sound.sfx = Sound.SoundManagerCreator.create(this.game)
+      }
+
+      if(this.game.sound && !this.game.sound.hasOwnProperty("voice")) {
+        this.game.sound.voice = Sound.SoundManagerCreator.create(this.game)
+      }
+
+      if(this.game.sound && !this.game.sound.hasOwnProperty("music")) {
+        this.game.sound.music = Sound.SoundManagerCreator.create(this.game)
+      }
     }
 }
