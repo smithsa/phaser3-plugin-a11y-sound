@@ -3,14 +3,15 @@
 const webpack = require('webpack');
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
+const SoundA11yPlugin = require("./src/plugin/main");
 
 module.exports = {
     mode: 'production',
     watch: false,
     context: `${__dirname}/src/plugin/`,
     entry: {
-      A11ySoundPlugin: './main.js',
-      'A11ySoundPlugin.min': './main.js'
+      SoundA11yPlugin: './main.js',
+      'SoundA11yPlugin.min': './main.js'
     },
 
     output: {
@@ -45,5 +46,6 @@ module.exports = {
         }),
       ]
     },
-    devtool: 'source-map'
+    devtool: 'source-map',
+    target: ['web', 'es5']
 };

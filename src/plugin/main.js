@@ -2,26 +2,24 @@ import {registerCustomPluginComponents} from "./components/register";
 import HTMLElementBuilder from "./utils/HTMLElementBuilder";
 import {Sound, Plugins, Game} from "phaser";
 
-export default class A11ySoundPlugin extends Plugins.ScenePlugin {
+export default class SoundA11yPlugin extends Plugins.ScenePlugin {
     constructor(scene, pluginManager) {
         super(scene, pluginManager);
         this.scene = scene;
-
-        //TODO REMOVE VALUES BELOW
-        this.counter = 0;
-        this.countDelay = 300;
-        this.nextCount = 0;
-        this.textObject = null;
-        this.active = true;
+        this.captions = {};
+        this.activeCaptions = [];
+        this.captionBottomOffset = 80;
+        this.defaultModalX = 500;
+        this.defaultModalY = 100;
+        this.defaultPrimaryColor = "#0d68c2";
     }
 
-    // TODO add documentation for the config
-    // modalX, modalY, primaryColor
-    init(config={}) {
-      const modalX = config.modalX || 500;
-      const modalY = config.modalY || 100;
-      const primaryColor = config.primaryColor || "black";
-      this._addOptionsUIElements(modalX, modalY, primaryColor);
+    init(configData={}) {
+        const modalX = configData.modalX || this.defaultModalX;
+        const modalY = configData.modalY || this.defaultModalY;
+        const primaryColor = configData.primaryColor || this.defaultPrimaryColor;
+        this._addOptionsUIElements(modalX, modalY, primaryColor);
+        this.captions = configData.captions || {};
     }
 
     //  Called when the Plugin is booted by the PluginManager.
@@ -30,19 +28,19 @@ export default class A11ySoundPlugin extends Plugins.ScenePlugin {
       registerCustomPluginComponents();
       this._buildRegistry();
       this._registerSoundChannels();
-      let eventEmitter = this.systems.events;
-      eventEmitter.on('update', this.update, this);
-      this.text = this.scene.add.text(100, 200, 'Phaser', {
+      this._injectCaptionCSS();
+
+      this.text = this.scene.add.text(100, 200, "Phaser3 Sound A11y Demo", {
           fontFamily: 'Arial',
           fontSize: 64,
-          color: '#00ff00'
+          color: '#ffffff'
       });
 
       /*
           List of unused eventEmitters to activate matching methods of this plugin
       */
 
-      //eventEmitter.on('start', this.start, this);
+     // eventEmitter.on('start', this.start, this);
 
       //eventEmitter.on('preupdate', this.preUpdate, this);
       //eventEmitter.on('postupdate', this.postUpdate, this);
@@ -54,28 +52,19 @@ export default class A11ySoundPlugin extends Plugins.ScenePlugin {
       //eventEmitter.on('wake', this.wake, this);
 
       //eventEmitter.on('shutdown', this.shutdown, this);
-      //eventEmitter.on('destroy', this.destroy, this);*/
+      // eventEmitter.on('start', this.install, this);
     }
 
     //  Called when a Scene is started by the SceneManager. The Scene is now active, visible and running.
-    start() {}
+    start() {
+
+    }
 
     //  Called every Scene step - phase 1
     preUpdate(time, delta) {}
 
     //  Called every Scene step - phase 2
-    update(time, delta) {
-        if (!this.active) {
-            return;
-        }
-        if ((this.nextCount -= delta) < 0) {
-            if (++this.counter > 99) {
-                this.counter = 0;
-            }
-            this.text.setText(this.counter);
-            this.nextCount = this.countDelay;
-        }
-    }
+    update(time, delta) {}
 
     //  Called every Scene step - phase 3
     postUpdate(time, delta) {}
@@ -102,27 +91,143 @@ export default class A11ySoundPlugin extends Plugins.ScenePlugin {
     }
 
     addVoiceSound(name) {
-      this.game.sound.voice.add(name);
+      return this.game.sound.voice.add(name);
     }
 
     addSFXSound(name) {
-      this.game.sound.sfx.add(name);
+      return this.game.sound.sfx.add(name);
     }
 
     addMusicSound(name) {
-      this.game.sound.music.add(name);
+      return this.game.sound.music.add(name);
     }
 
-    // TODO REMOVE FROM PROJECT
-    //  Custom method for this plugin
-    setDelay(delay) {
-        this.countDelay = delay;
+    play(soundObject, marker=null, config={}) {
+      return new Promise(function(resolve, reject) {
+        try {
+          if(this.game.registry.get("captionsOn")) {
+            this._playCaptionedSound(soundObject, marker, config).then(() => {
+              resolve(soundObject);
+            }).catch((error) => {
+              reject(error)
+            });
+          } else{
+            this._playSound(soundObject, marker, config).then(() => {
+              resolve(soundObject);
+            }).catch((error) => {
+              reject(error)
+            });
+          }
+        } catch (error) {
+          reject(error);
+        }
+      }.bind(this));
     }
 
-    //  Custom method for this plugin
-    reset() {
-        this.counter = 0;
-        this.text.setText(0);
+    _playSound(soundObject, marker, config) {
+      soundObject.manager.stopAll();
+      return new Promise(function(resolve, reject) {
+        try {
+          let sound;
+          if (marker) {
+            soundObject.play(marker, config);
+          } else {
+            soundObject.play(config);
+          }
+
+          soundObject.on("complete", () => resolve(sound));
+        } catch (error) {
+          reject( error);
+        }
+      });
+    }
+
+    _playCaptionedSound(soundObject, marker=null, config={}) {
+      return new Promise(function (resolve, reject) {
+      try {
+        const markers = Object.keys(soundObject.markers);
+        if(markers.length === 0) {
+          this._startCaptionedAudio(soundObject, marker, config);
+
+          soundObject.on('complete', (function() {
+            this._removeCaptions();
+            soundObject.removeAllListeners();
+            resolve(soundObject);
+          }).bind(this));
+
+          return soundObject;
+        }
+
+        // setting up the generator to play subsequent markers after the
+        // sound object has completed playing.
+        const soundMarkerGenerator = this._SoundMarkerIterator(markers);
+        soundObject.on("complete", () => {
+          const currentMarker = soundMarkerGenerator.next();
+          if (currentMarker.done) {
+            this._removeCaptions();
+            soundObject.removeAllListeners();
+            resolve(soundObject);
+          } else {
+            this._startCaptionedAudio(soundObject, currentMarker.value, config);
+          }
+        });
+
+        this._startCaptionedAudio(soundObject, markers[0], config);
+      } catch(error) {
+        reject(error);
+      }
+    }.bind(this));
+    }
+
+    _startCaptionedAudio(soundObject, marker=null, config={}) {
+      this._removeCaptions();
+
+      soundObject.on('play', (function() {
+        const captionElement = this._addCaptions(marker || soundObject.key)
+        this.activeCaptions.push(captionElement);
+      }).bind(this));
+
+
+      this._playSound(soundObject, marker, config);
+
+      return soundObject;
+    }
+
+    _removeCaptions() {
+      this.activeCaptions.forEach((caption) => {
+        caption.remove();
+      });
+    }
+
+    _addCaptions(captionKey) {
+      this._removeCaptions();
+      const captionHtmlElement = new HTMLElementBuilder("div");
+      captionHtmlElement.addClasses("captions");
+      if(captionKey in this.captions) {
+        captionHtmlElement.appendElements(this._createCaptionCueElement(this.captions[captionKey]));
+      } else {
+        console.warn(`caption key: ${captionKey} was not found in captions`);
+      }
+
+      this.scene.add.dom(this.game.config.width/2, this.game.config.height-this.captionBottomOffset,
+        captionHtmlElement.element).setOrigin(.5, 1);
+
+      return captionHtmlElement.element;
+    }
+
+    _createCaptionCueElement(cueText) {
+      const captionCueElement = new HTMLElementBuilder("p", cueText);
+      captionCueElement.addClasses("cue");
+
+      return captionCueElement.element;
+    }
+
+    * _SoundMarkerIterator(markers) {
+      for(let i=1; i < markers.length; i++) {
+        yield markers[i];
+      }
+
+      return;
     }
 
     _buildRegistry() {
@@ -149,14 +254,40 @@ export default class A11ySoundPlugin extends Plugins.ScenePlugin {
       }
     }
 
-  _addOptionsUIElements(modalX, modalY, primaryColor) {
-    const optionsModalBuilder = new HTMLElementBuilder("options-modal")
-      .addAttributes({"open": false, "id": "options-modal", "color": primaryColor});
+    _addOptionsUIElements(modalX, modalY, primaryColor) {
+      const optionsModalBuilder = new HTMLElementBuilder("options-modal")
+        .addAttributes({"open": false, "id": "options-modal", "color": primaryColor});
 
-    this.add.dom(modalX, modalY, optionsModalBuilder.element);
+      this.scene.add.dom(modalX, modalY, optionsModalBuilder.element);
 
-    const optionsButtonBuilder = new HTMLElementBuilder("options-button")
-      .addAttributes({"modal-id": "options-modal", color: primaryColor});
-    this.add.dom(this.game.config.width - 100, 100, optionsButtonBuilder.element).setDepth(1000);
-  }
+      const optionsButtonBuilder = new HTMLElementBuilder("options-button")
+        .addAttributes({"modal-id": "options-modal", color: primaryColor});
+      this.scene.add.dom(this.game.config.width - 100, 100, optionsButtonBuilder.element).setDepth(1000);
+    }
+
+    _injectCaptionCSS() {
+      if(!window.esparkGame.hasOwnProperty("cssInjected")) {
+        const cssStyles = `
+        .captions {
+            z-index: 100;
+            max-width: 75%;
+          }
+
+        .captions .cue {
+            color: white;
+            font-size: 48px;
+            background: rgba(0,0,0, .8);
+            padding:5px 10px;
+            width: fit-content;
+            margin: 0 auto;
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+          }
+        `;
+        const css = document.createElement("style");
+        css.textContent = cssStyles;
+        document.body.appendChild(css);
+        window.esparkGame.cssInjected = true;
+      }
+    }
 }

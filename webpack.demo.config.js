@@ -62,15 +62,17 @@ module.exports = {
         })
     ],
     module: {
-        rules: [{
-                test: /\.js$/, // Check for all js files
-                exclude: /node_modules/,
-                use: [{
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['es2015']
-                    }
-                }]
+        rules: [
+            {
+              test: /\.js$/,
+              include: path.resolve(__dirname, 'dist/'),
+              exclude: /node_modules/,
+              use: {
+                loader: 'babel-loader',
+                options: {
+                  presets: ['@babel/preset-env']
+                }
+              }
             },
             {
                 test: /phaser-split\.js$/,
@@ -84,5 +86,6 @@ module.exports = {
     },
     performance: {
         hints: false // Ignore warnings about large bundles as it really don't apply to games
-    }
+    },
+    target: ['web', 'es5']
 };
