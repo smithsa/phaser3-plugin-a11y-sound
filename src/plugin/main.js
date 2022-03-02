@@ -1,9 +1,13 @@
-import {Sound, Plugins} from "phaser";
+import {registerCustomPluginComponents} from "./components/register";
+import HTMLElementBuilder from "./utils/HTMLElementBuilder";
+import {Sound, Plugins, Game} from "phaser";
 
 export default class A11ySoundPlugin extends Plugins.ScenePlugin {
     constructor(scene, pluginManager) {
         super(scene, pluginManager);
         this.scene = scene;
+
+        //TODO REMOVE VALUES BELOW
         this.counter = 0;
         this.countDelay = 300;
         this.nextCount = 0;
@@ -11,9 +15,20 @@ export default class A11ySoundPlugin extends Plugins.ScenePlugin {
         this.active = true;
     }
 
+    // TODO add documentation for the config
+    // modalX, modalY, primaryColor
+    init(config={}) {
+      const modalX = config.modalX || 500;
+      const modalY = config.modalY || 100;
+      const primaryColor = config.primaryColor || "black";
+      this._addOptionsUIElements(modalX, modalY, primaryColor);
+    }
+
     //  Called when the Plugin is booted by the PluginManager.
     //  If you need to reference other systems in the Scene (like the Loader or DisplayList) then set-up those references now, not in the constructor.
     boot() {
+      registerCustomPluginComponents();
+      this._buildRegistry();
       this._registerSoundChannels();
       let eventEmitter = this.systems.events;
       eventEmitter.on('update', this.update, this);
@@ -86,6 +101,19 @@ export default class A11ySoundPlugin extends Plugins.ScenePlugin {
         this.scene = undefined;
     }
 
+    addVoiceSound(name) {
+      this.game.sound.voice.add(name);
+    }
+
+    addSFXSound(name) {
+      this.game.sound.sfx.add(name);
+    }
+
+    addMusicSound(name) {
+      this.game.sound.music.add(name);
+    }
+
+    // TODO REMOVE FROM PROJECT
     //  Custom method for this plugin
     setDelay(delay) {
         this.countDelay = delay;
@@ -95,6 +123,16 @@ export default class A11ySoundPlugin extends Plugins.ScenePlugin {
     reset() {
         this.counter = 0;
         this.text.setText(0);
+    }
+
+    _buildRegistry() {
+      if(!window.hasOwnProperty("esparkGame")) {
+        window.esparkGame = this.game;
+        window.esparkGame.registry.set({
+          backgroundMusicOn: true,
+          captionsOn: true
+        });
+      }
     }
 
     _registerSoundChannels () {
@@ -110,4 +148,15 @@ export default class A11ySoundPlugin extends Plugins.ScenePlugin {
         this.game.sound.music = Sound.SoundManagerCreator.create(this.game)
       }
     }
+
+  _addOptionsUIElements(modalX, modalY, primaryColor) {
+    const optionsModalBuilder = new HTMLElementBuilder("options-modal")
+      .addAttributes({"open": false, "id": "options-modal", "color": primaryColor});
+
+    this.add.dom(modalX, modalY, optionsModalBuilder.element);
+
+    const optionsButtonBuilder = new HTMLElementBuilder("options-button")
+      .addAttributes({"modal-id": "options-modal", color: primaryColor});
+    this.add.dom(this.game.config.width - 100, 100, optionsButtonBuilder.element).setDepth(1000);
+  }
 }
