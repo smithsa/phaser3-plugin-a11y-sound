@@ -12,6 +12,7 @@ export default class OptionsModal extends HTMLElement {
     this._musicVolumeChangeHandler = this._musicVolumeChangeHandler.bind(this);
     this._sfxVolumeChangeHandler = this._sfxVolumeChangeHandler.bind(this);
     this._closeClickHandler = this._closeClickHandler.bind(this);
+    this._soundChannelVolumeChange = this._soundChannelVolumeChange.bind(this);
 
     this.attachShadow({mode: "open"});
 
@@ -155,13 +156,27 @@ export default class OptionsModal extends HTMLElement {
     this._changeSoundManagerVolume(event, this.SFX_SOUND_MANAGER_ID);
   }
 
-  _closeClickHandler() {
+  _closeClickHandler(event) {
     this.open = this._getOppositeValueOfValueAttr(this.open);
     this.modalElement.setAttribute("aria-hidden", this._getOppositeValueOfValueAttr(this.open));
+    let activeScenes = window.esparkGame.scene.getScenes(true);
+    activeScenes.forEach((scene) => {
+      scene.input.mouse.enabled = true;
+    });
   }
 
   _getOppositeValueOfValueAttr(isOpen) {
     return isOpen === 'true' ? 'false' : 'true';
+  }
+
+  _soundChannelVolumeChange(channel, slider) {
+    window.esparkGame.sound[channel].on('volume', () => {
+      const delay = setTimeout(() => {
+        const newVolume = window.esparkGame.sound[channel].volume;
+        slider.setAttribute("value", newVolume);
+        clearTimeout(delay);
+      }, 1000);
+    });
   }
 
   connectedCallback() {
@@ -169,13 +184,13 @@ export default class OptionsModal extends HTMLElement {
     this.voiceSliderElement.addEventListener("volumechange", this._voiceVolumeChangeHandler);
     this.musicSliderElement.addEventListener("volumechange", this._musicVolumeChangeHandler);
     this.sfxSliderElement.addEventListener("volumechange", this._sfxVolumeChangeHandler);
-    this.closeButton.addEventListener("click", this._closeClickHandler);
+    this.closeButton.addEventListener("click", this._closeClickHandler, true);
     this.modalElement.setAttribute("aria-hidden",
       this._getOppositeValueOfValueAttr(this.open));
-    this.voiceSliderElement.setAttribute("value", window.esparkGame.sound[this.VOICE_SOUND_MANAGER_ID].volume);
-    this.musicSliderElement.setAttribute("value", window.esparkGame.sound[this.MUSIC_SOUND_MANAGER_ID].volume);
-    this.sfxSliderElement.setAttribute("value", window.esparkGame.sound[this.SFX_SOUND_MANAGER_ID].volume);
     this.captionsToggleElement.setAttribute("toggle-on", window.esparkGame.registry.get(this.CAPTIONS_KEY));
+    this._soundChannelVolumeChange(this.MUSIC_SOUND_MANAGER_ID, this.musicSliderElement);
+    this._soundChannelVolumeChange(this.VOICE_SOUND_MANAGER_ID, this.voiceSliderElement);
+    this._soundChannelVolumeChange(this.SFX_SOUND_MANAGER_ID, this.sfxSliderElement);
   }
 
   disconnectedCallback() {

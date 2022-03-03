@@ -54,6 +54,10 @@ export default class OptionsModal extends HTMLElement {
     }
     this.modal.setAttribute("open", true);
     this.modal.focus();
+    let activeScenes = window.esparkGame.scene.getScenes(true);
+    activeScenes.forEach((scene) => {
+      scene.input.mouse.enabled = false;
+    });
   }
 
   connectedCallback() {

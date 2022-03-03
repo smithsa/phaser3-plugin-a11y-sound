@@ -11,23 +11,25 @@ export default class SoundA11yPlugin extends Plugins.ScenePlugin {
         this.captionBottomOffset = 80;
         this.defaultModalX = 500;
         this.defaultModalY = 100;
-        this.defaultPrimaryColor = "#0d68c2";
     }
 
     init(configData={}) {
-        const modalX = configData.modalX || this.defaultModalX;
-        const modalY = configData.modalY || this.defaultModalY;
-        const primaryColor = configData.primaryColor || this.defaultPrimaryColor;
-        this._addOptionsUIElements(modalX, modalY, primaryColor);
-        this.captions = configData.captions || {};
+      const modalX = configData.modalX || 500;
+      const modalY = configData.modalY || 100;
+      const primaryColor = configData.primaryColor || "#0d68c2";
+      this._addOptionsUIElements(modalX, modalY, primaryColor);
+      this.captions = configData.captions || {};
+      this.game.sound.music.setVolume(configData?.volume?.music || .2);
+      this.game.sound.sfx.setVolume(configData?.volume?.sfx || .5);
+      this.game.sound.voice.setVolume(configData?.volume?.voice || .5);
     }
 
     //  Called when the Plugin is booted by the PluginManager.
     //  If you need to reference other systems in the Scene (like the Loader or DisplayList) then set-up those references now, not in the constructor.
     boot() {
       registerCustomPluginComponents();
-      this._buildRegistry();
       this._registerSoundChannels();
+      this._buildRegistry();
       this._injectCaptionCSS();
       /*
           List of unused eventEmitters to activate matching methods of this plugin
@@ -111,6 +113,7 @@ export default class SoundA11yPlugin extends Plugins.ScenePlugin {
       this.stopMusic();
       this.stopSFX();
       this.stopVoice();
+      this._removeCaptions();
     }
 
     play(soundObject, marker=null, config={}) {
@@ -301,5 +304,4 @@ export default class SoundA11yPlugin extends Plugins.ScenePlugin {
         window.esparkGame.cssInjected = true;
       }
     }
-
 }

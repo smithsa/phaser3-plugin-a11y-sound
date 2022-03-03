@@ -62,11 +62,13 @@ class Button {
     const button = scene.add.text(x, y, label)
       .setOrigin(0.5)
       .setPadding(10)
-      .setDepth(-1)
+      .setDepth(-1000)
       .setStyle({ backgroundColor: '#218c74', fontSize: "38px" })
-      .setInteractive({ useHandCursor: true })
       .on('pointerdown', () => callback())
       .on('pointerover', () => button.setStyle({ backgroundColor: "#fff", fill: "#218c74" }))
       .on('pointerout', () => button.setStyle({ backgroundColor: "#218c74", fill: '#FFF' }));
+
+    button.setInteractive({ useHandCursor: true });
+
   }
 }
