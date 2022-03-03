@@ -30,12 +30,14 @@ export default class Demo extends Phaser.Scene {
       this.introSoundObject.addMarker({name: "intro_slime_expanding", start: 7.9, duration: 5.3});
       this.introSoundObject.addMarker({name: "intro_end", start: 13.2, duration: 2});
 
-      this.SoundA11yPlugin.play(this.bgMusicSoundObject);
-
-      this.add.text(100, 200, "Phaser3 Sound A11y Demo", {
+      this.add.text(100, 100, "Phaser3 Sound A11y Demo", {
         fontFamily: 'Arial',
         fontSize: 64,
         color: '#ffffff'
+      });
+
+      new Button(800, 300, 'Play background music', this, () => {
+        this.SoundA11yPlugin.play(this.bgMusicSoundObject)
       });
 
       new Button(800, 400, 'Play sound object on voice channel, no markers', this, () => {
