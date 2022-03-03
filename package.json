@@ -27,7 +27,6 @@
     "browser-sync": "^2.24.4",
     "browser-sync-webpack-plugin": "^2.2.2",
     "copy-webpack-plugin": "^4.5.1",
-    "dat.gui": "^0.7.0",
     "html-webpack-plugin": "^5.5.0",
     "phaser": "^3.55.2",
     "terser-webpack-plugin": "^5.3.1",

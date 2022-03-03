@@ -17,7 +17,7 @@ module.exports = {
     output: {
         path: `${__dirname}/dist/`,
         filename: '[name].js',
-        library: 'A11ySoundPlugin',
+        library: 'SoundA11yPlugin',
         libraryTarget: 'umd',
         umdNamedDefine: true
     },

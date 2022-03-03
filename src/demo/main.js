@@ -10,6 +10,7 @@ const config = {
         Demo
     ],
     parent: "game-container",
+    backgroundColor: '#2c3e50',
     dom: {
       createContainer: true
     },
@@ -19,7 +20,7 @@ const config = {
     },
     plugins: {
       scene: [
-        { key: 'SoundA11Y',
+        { key: 'SoundA11yPlugin',
           plugin: SoundA11yPlugin,
           start: true,
           mapping: 'SoundA11yPlugin'

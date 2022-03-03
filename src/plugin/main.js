@@ -29,13 +29,6 @@ export default class SoundA11yPlugin extends Plugins.ScenePlugin {
       this._buildRegistry();
       this._registerSoundChannels();
       this._injectCaptionCSS();
-
-      this.text = this.scene.add.text(100, 200, "Phaser3 Sound A11y Demo", {
-          fontFamily: 'Arial',
-          fontSize: 64,
-          color: '#ffffff'
-      });
-
       /*
           List of unused eventEmitters to activate matching methods of this plugin
       */
@@ -100,6 +93,24 @@ export default class SoundA11yPlugin extends Plugins.ScenePlugin {
 
     addMusicSound(name) {
       return this.game.sound.music.add(name);
+    }
+
+    stopVoice() {
+      this.game.sound.voice.stopAll();
+    }
+
+    stopSFX() {
+      this.game.sound.sfx.stopAll();
+    }
+
+    stopMusic() {
+      this.game.sound.music.stopAll();
+    }
+
+    stopAll() {
+      this.stopMusic();
+      this.stopSFX();
+      this.stopVoice();
     }
 
     play(soundObject, marker=null, config={}) {
@@ -258,7 +269,7 @@ export default class SoundA11yPlugin extends Plugins.ScenePlugin {
       const optionsModalBuilder = new HTMLElementBuilder("options-modal")
         .addAttributes({"open": false, "id": "options-modal", "color": primaryColor});
 
-      this.scene.add.dom(modalX, modalY, optionsModalBuilder.element);
+      this.scene.add.dom(modalX, modalY, optionsModalBuilder.element).setDepth(1000);
 
       const optionsButtonBuilder = new HTMLElementBuilder("options-button")
         .addAttributes({"modal-id": "options-modal", color: primaryColor});
@@ -290,4 +301,5 @@ export default class SoundA11yPlugin extends Plugins.ScenePlugin {
         window.esparkGame.cssInjected = true;
       }
     }
+
 }
