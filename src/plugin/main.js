@@ -14,7 +14,6 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
       const modalX = configData.modalX || 500;
       const modalY = configData.modalY || 100;
       const primaryColor = configData.primaryColor || "#0d68c2";
-      this._addOptionsUIElements(modalX, modalY, primaryColor);
       const captionsOn = configData.captionsOn || false;
       const captions = configData.captions || {};
       this.game.registry.set("captions", captions);
@@ -23,6 +22,7 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
       this.game.sound.music.setVolume(configData?.volume?.music || .2);
       this.game.sound.sfx.setVolume(configData?.volume?.sfx || .5);
       this.game.sound.voice.setVolume(configData?.volume?.voice || 1);
+      this._addOptionsUIElements(modalX, modalY, primaryColor);
     }
 
     //  Called when the Plugin is booted by the PluginManager.
@@ -195,7 +195,6 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
     _buildRegistry() {
       if(!window.hasOwnProperty("esparkGame")) {
         this.game.registry.set({
-          backgroundMusicOn: true,
           captionsOn: true,
           cssInjected: false,
           captions: {},
