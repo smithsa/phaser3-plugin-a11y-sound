@@ -28,7 +28,10 @@ Build the plugin including minified version. Targets the dist folder.
 Usage can be seen in the demo folder.
 
 ### Plugin Installation
-1. Import the SoundA11yPlugin plugin
+1a. Install the package by running the following in your terminal
+`yarn add phaser3-plugin-sound-a11y`
+
+1b. Import the SoundA11yPlugin plugin
    `import SoundA11yPlugin from "phaser3-plugin-sound-a11y"`
 
 2. Ensure your game config has the `parent` and `dom` fields set.
