@@ -6,7 +6,7 @@ control the volume of each channel.
 It utilizes accessible DOM elements for an options modal that controls captioning and volume as well as the caption cues.
 
 
-<img width="100%" alt="demo of sound accessibility plugin" src=""/>
+<img width="100%" alt="demo of sound accessibility plugin" src="http://g.recordit.co/wdGiX64gEw.gif"/>
 
 ## Prerequisites
 * [Yarn] (https://yarnpkg.com/)
