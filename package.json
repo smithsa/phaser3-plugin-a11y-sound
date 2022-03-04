@@ -1,6 +1,6 @@
 {
   "name": "phaser3-plugin-sound-a11y",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Accessible sound utility plugin for Phaser 3 games.",
   "main": "src/main.js",
   "scripts": {
