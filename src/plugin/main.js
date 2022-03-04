@@ -1,8 +1,7 @@
 import {registerCustomPluginComponents} from "./components/register";
 import HTMLElementBuilder from "./utils/HTMLElementBuilder";
-import {Sound, Plugins, Game} from "phaser";
 
-export default class SoundA11yPlugin extends Plugins.ScenePlugin {
+export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
     constructor(scene, pluginManager) {
         super(scene, pluginManager);
         this.scene = scene;
@@ -256,15 +255,15 @@ export default class SoundA11yPlugin extends Plugins.ScenePlugin {
 
     _registerSoundChannels () {
       if(this.game.sound && !this.game.sound.hasOwnProperty("sfx")) {
-        this.game.sound.sfx = Sound.SoundManagerCreator.create(this.game)
+        this.game.sound.sfx = Phaser.Sound.SoundManagerCreator.create(this.game)
       }
 
       if(this.game.sound && !this.game.sound.hasOwnProperty("voice")) {
-        this.game.sound.voice = Sound.SoundManagerCreator.create(this.game)
+        this.game.sound.voice = Phaser.Sound.SoundManagerCreator.create(this.game)
       }
 
       if(this.game.sound && !this.game.sound.hasOwnProperty("music")) {
-        this.game.sound.music = Sound.SoundManagerCreator.create(this.game)
+        this.game.sound.music = Phaser.Sound.SoundManagerCreator.create(this.game)
       }
     }
 

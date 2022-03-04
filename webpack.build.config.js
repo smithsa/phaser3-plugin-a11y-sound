@@ -1,9 +1,6 @@
 'use strict';
-
-const webpack = require('webpack');
-const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
-const SoundA11yPlugin = require("./src/plugin/main");
+const path = require("path");
 
 module.exports = {
     mode: 'production',
@@ -22,16 +19,19 @@ module.exports = {
         umdNamedDefine: true
     },
     module: {
-        rules: [{
-            test: /\.js$/, // Check for all js files
+        rules: [
+          {
+            test: /\.js$/,
+            include: path.resolve(__dirname, 'dist/'),
             exclude: /node_modules/,
-            use: [{
-                loader: 'babel-loader',
-                options: {
-                    presets: ['es2015']
-                }
-            }]
-        }]
+            use: {
+              loader: 'babel-loader',
+              options: {
+                presets: ['@babel/preset-env']
+              }
+            }
+          }
+        ]
     },
     optimization: {
       usedExports: true,
@@ -41,7 +41,7 @@ module.exports = {
           terserOptions: {
             output: {
               comments: false,
-            },
+            }
           },
         }),
       ]
