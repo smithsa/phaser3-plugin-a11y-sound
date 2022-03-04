@@ -53,7 +53,7 @@ export default class Demo extends Phaser.Scene {
       });
 
       new Button(800, 700, 'Stop all sound', this, () => {
-        this.SoundA11yPlugin.stop("music");
+        this.SoundA11yPlugin.stop();
       });
     }
 

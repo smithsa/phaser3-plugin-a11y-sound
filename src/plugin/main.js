@@ -5,8 +5,6 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
     constructor(scene, pluginManager) {
         super(scene, pluginManager);
         this.scene = scene;
-        this.captions = {};
-        this.activeCaptions = [];
         this.captionBottomOffset = 80;
         this.defaultModalX = 500;
         this.defaultModalY = 100;
@@ -17,7 +15,8 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
       const modalY = configData.modalY || 100;
       const primaryColor = configData.primaryColor || "#0d68c2";
       this._addOptionsUIElements(modalX, modalY, primaryColor);
-      this.captions = configData.captions || {};
+      const captions = configData.captions || {};
+      this.game.registry.set("captions", captions);
       this.game.sound.music.setVolume(configData?.volume?.music || .2);
       this.game.sound.sfx.setVolume(configData?.volume?.sfx || .5);
       this.game.sound.voice.setVolume(configData?.volume?.voice || 1);
@@ -138,8 +137,10 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
 
       soundObject.on('play', (function() {
         if(this.game.registry.get("captionsOn")) {
-          const captionElement = this._addCaptions(marker || soundObject.key)
-          this.activeCaptions.push(captionElement);
+          const captionElement = this._addCaptions(marker || soundObject.key);
+          let activeCaptions = this.game.registry.get("activeCaptions");
+          activeCaptions.push(captionElement);
+          this.game.registry.set("activeCaptions", activeCaptions);
         }
       }).bind(this));
 
@@ -150,7 +151,8 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
     }
 
     _removeCaptions() {
-      this.activeCaptions.forEach((caption) => {
+      const activeCaptions = this.game.registry.get("activeCaptions");
+      activeCaptions.forEach((caption) => {
         caption.remove();
       });
     }
@@ -159,8 +161,9 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
       this._removeCaptions();
       const captionHtmlElement = new HTMLElementBuilder("div");
       captionHtmlElement.addClasses("captions");
-      if(captionKey in this.captions) {
-        captionHtmlElement.appendElements(this._createCaptionCueElement(this.captions[captionKey]));
+      const captions = this.game.registry.get("captions");
+      if(captionKey in captions) {
+        captionHtmlElement.appendElements(this._createCaptionCueElement(captions[captionKey]));
       } else {
         console.warn(`caption key: ${captionKey} was not found in captions`);
       }
@@ -188,11 +191,15 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
 
     _buildRegistry() {
       if(!window.hasOwnProperty("esparkGame")) {
-        window.esparkGame = this.game;
-        window.esparkGame.registry.set({
+        this.game.registry.set({
           backgroundMusicOn: true,
-          captionsOn: true
+          captionsOn: true,
+          cssInjected: false,
+          captions: {},
+          activeCaptions: []
         });
+
+        window.esparkGame = this.game;
       }
     }
 
@@ -222,7 +229,7 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
     }
 
     _injectCaptionCSS() {
-      if(!window.esparkGame.hasOwnProperty("cssInjected")) {
+      if(!this.game.registry.get("cssInjected")) {
         const cssStyles = `
         .captions {
             z-index: 100;
@@ -243,7 +250,7 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
         const css = document.createElement("style");
         css.textContent = cssStyles;
         document.body.appendChild(css);
-        window.esparkGame.cssInjected = true;
+        this.game.registry.set("cssInjected", true);
       }
     }
 }
