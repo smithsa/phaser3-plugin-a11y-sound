@@ -9,7 +9,7 @@ It utilizes accessible DOM elements for an options modal that controls captionin
 <img width="100%" alt="demo of sound accessibility plugin" src="http://g.recordit.co/wdGiX64gEw.gif"/>
 
 ## Prerequisites
-* [Yarn] (https://yarnpkg.com/)
+* [Yarn](https://yarnpkg.com/)
 * [Node](https://nodejs.org/en/)
 
 ## Installation
@@ -34,7 +34,7 @@ Usage can be seen in the demo folder.
 2. Ensure your game config has the `parent` and `dom` fields set.
 [See Phaser API docs for game config for more information.](https://newdocs.phaser.io/docs/3.52.0/Phaser.Types.Core.GameConfig)
 
-```json
+```
     parent: "game-container",
     dom: {
       createContainer: true
@@ -42,7 +42,7 @@ Usage can be seen in the demo folder.
 ```
 
 3. Install the plugin by adding the following in your game config
-```json
+```
   plugins: {
       scene: [
         { key: 'SoundA11yPlugin',
@@ -126,20 +126,18 @@ this.SoundA11yPlugin.stop("voice");
 ### Plugin Methods
 | method | parameter type| parameter description |  returns | description |
 |---|---|---|---|---|
-| init | config\<object> | [see example, #4](###-Plugin Installation) | undefined | initializes the plugin with config settings|
+| init | config\<object> | [see example, #4](###Plugin Installation) | undefined | initializes the plugin with config settings|
 | addSound | channel\<string> , key\<string>, [phaserSoundConfig\<object>](https://photonstorm.github.io/phaser3-docs/Phaser.Types.Sound.html#.SoundConfig) | the sound channel, Phaser sound key, Phaser sound object config| [Phaser Sound Object](https://photonstorm.github.io/phaser3-docs/Phaser.Sound.BaseSound.html) | stops specified sounds channel|
 | play | [soundObject\<object>](https://photonstorm.github.io/phaser3-docs/Phaser.Sound.BaseSound.html) | [Phaser sound object](https://photonstorm.github.io/phaser3-docs/Phaser.Sound.BaseSound.html) | promise | plays phaser sound audio|
 | stop | channel\<string> | valid options are "sound", "music", "voice" | undefined | stops specified sounds channel|
-
-
 
 
 ## Built With
 * [Phaser 3](https://phaser.io/phaser3)
 * [Javascript](https://www.javascript.com/)
 * [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components)
-* [Webpack] (https://webpack.js.org/)
-* [Yarn] (https://yarnpkg.com/)
+* [Webpack](https://webpack.js.org/)
+* [Yarn](https://yarnpkg.com/)
 
 
 ## Contributing
