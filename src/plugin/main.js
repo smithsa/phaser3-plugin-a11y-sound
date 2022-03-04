@@ -137,8 +137,10 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
       this._removeCaptions();
 
       soundObject.on('play', (function() {
-        const captionElement = this._addCaptions(marker || soundObject.key)
-        this.activeCaptions.push(captionElement);
+        if(this.game.registry.get("captionsOn")) {
+          const captionElement = this._addCaptions(marker || soundObject.key)
+          this.activeCaptions.push(captionElement);
+        }
       }).bind(this));
 
 
