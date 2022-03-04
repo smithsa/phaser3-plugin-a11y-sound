@@ -19,10 +19,10 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
       this.game.registry.set("captions", captions);
       this.game.registry.set("activeCaptions", []);
       this.game.registry.set("captionsOn", captionsOn);
+      this._addOptionsUIElements(modalX, modalY, primaryColor);
       this.game.sound.music.setVolume(configData?.volume?.music || .2);
       this.game.sound.sfx.setVolume(configData?.volume?.sfx || .5);
       this.game.sound.voice.setVolume(configData?.volume?.voice || 1);
-      this._addOptionsUIElements(modalX, modalY, primaryColor);
     }
 
     //  Called when the Plugin is booted by the PluginManager.
@@ -61,44 +61,19 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
     play(soundObject, marker=null, config={}) {
       return new Promise(function(resolve, reject) {
         try {
-          if(this.game.registry.get("captionsOn")) {
-            this._playCaptionedSound(soundObject, marker, config).then(() => {
-              resolve(soundObject);
-            }).catch((error) => {
-              reject(error)
-            });
-          } else{
-            this._playSound(soundObject, marker, config).then(() => {
-              resolve(soundObject);
-            }).catch((error) => {
-              reject(error)
-            });
-          }
+          this._playCaptionedSound(soundObject, marker, config).then(() => {
+            resolve(soundObject);
+          }).catch((error) => {
+            reject(error)
+          });
         } catch (error) {
           reject(error);
         }
       }.bind(this));
     }
 
-    _playSound(soundObject, marker, config) {
-      soundObject.manager.stopAll();
-      return new Promise(function(resolve, reject) {
-        try {
-          let sound;
-          if (marker) {
-            soundObject.play(marker, config);
-          } else {
-            soundObject.play(config);
-          }
-
-          soundObject.on("complete", () => resolve(sound));
-        } catch (error) {
-          reject( error);
-        }
-      });
-    }
-
     _playCaptionedSound(soundObject, marker=null, config={}) {
+      soundObject.manager.stopAll();
       return new Promise(function (resolve, reject) {
       try {
         const markers = Object.keys(soundObject.markers);
@@ -151,6 +126,24 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
       this._playSound(soundObject, marker, config);
 
       return soundObject;
+    }
+
+    _playSound(soundObject, marker, config) {
+      soundObject.manager.stopAll();
+      return new Promise(function(resolve, reject) {
+        try {
+          let sound;
+          if (marker) {
+            soundObject.play(marker, config);
+          } else {
+            soundObject.play(config);
+          }
+
+          soundObject.on("complete", () => resolve(sound));
+        } catch (error) {
+          reject( error);
+        }
+      });
     }
 
     _removeCaptions() {

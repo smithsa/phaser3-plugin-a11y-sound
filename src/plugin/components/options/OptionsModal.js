@@ -13,6 +13,7 @@ export default class OptionsModal extends HTMLElement {
     this._sfxVolumeChangeHandler = this._sfxVolumeChangeHandler.bind(this);
     this._closeClickHandler = this._closeClickHandler.bind(this);
     this._soundChannelVolumeChange = this._soundChannelVolumeChange.bind(this);
+    this._removeActiveCaptions = this._removeActiveCaptions.bind(this);
 
     this.attachShadow({mode: "open"});
 
@@ -136,6 +137,7 @@ export default class OptionsModal extends HTMLElement {
     if(event.detail.on === 'true') {
       window.esparkGame.registry.set(this.CAPTIONS_KEY, true);
     } else {
+      this._removeActiveCaptions();
       window.esparkGame.registry.set(this.CAPTIONS_KEY, false);
     }
   }
@@ -179,6 +181,13 @@ export default class OptionsModal extends HTMLElement {
     });
   }
 
+  _removeActiveCaptions() {
+    const activeCaptions = window.esparkGame.registry.get("activeCaptions");
+    activeCaptions.forEach((caption) => {
+      caption.remove();
+    });
+  }
+
   connectedCallback() {
     this.captionsToggleElement.addEventListener("toggle", this._captionToggleHandler);
     this.voiceSliderElement.addEventListener("volumechange", this._voiceVolumeChangeHandler);
@@ -198,7 +207,6 @@ export default class OptionsModal extends HTMLElement {
     this.voiceSliderElement.removeEventListener("volumechange", this._voiceVolumeChangeHandler);
     this.musicSliderElement.removeEventListener("volumechange", this._musicVolumeChangeHandler);
     this.sfxSliderElement.removeEventListener("volumechange", this._sfxVolumeChangeHandler);
-
   }
 
   static get observedAttributes() {
