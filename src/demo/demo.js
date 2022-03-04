@@ -19,10 +19,10 @@ export default class Demo extends Phaser.Scene {
     }
 
     create() {
-      this.titleSoundObject = this.SoundA11yPlugin.addSound('voice', 'title');
-      this.introSoundObject = this.SoundA11yPlugin.addSound('voice', 'intro');
-      this.bgMusicSoundObject = this.SoundA11yPlugin.addSound('music', 'bgmusic');
-      this.splatSoundObject = this.SoundA11yPlugin.addSound('sfx', 'splat');
+      this.titleSoundObject = this.SoundA11yPlugin.add('voice', 'title');
+      this.introSoundObject = this.SoundA11yPlugin.add('voice', 'intro');
+      this.bgMusicSoundObject = this.SoundA11yPlugin.add('music', 'bgmusic');
+      this.splatSoundObject = this.SoundA11yPlugin.add('sfx', 'splat');
 
       this.introSoundObject.addMarker({name: "intro_start", start: 0, duration: 3});
       this.introSoundObject.addMarker({name: "intro_beakers_exploded", start: 3, duration: 2});
@@ -71,6 +71,5 @@ class Button {
       .on('pointerout', () => button.setStyle({ backgroundColor: "#218c74", fill: '#FFF' }));
 
     button.setInteractive({ useHandCursor: true });
-
   }
 }

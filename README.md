@@ -90,7 +90,7 @@ preload () {
 }
 
 create() {
-  this.titleSoundObject = this.SoundA11yPlugin.addSound('voice', 'title');
+  this.titleSoundObject = this.SoundA11yPlugin.add('voice', 'title');
 }
 ```
 
@@ -101,7 +101,7 @@ preload () {
 }
 
 create() {
-  this.titleSoundObject = this.SoundA11yPlugin.addSound('voice', 'title');
+  this.titleSoundObject = this.SoundA11yPlugin.add('voice', 'title');
   this.SoundA11yPlugin.play(titleSoundObject);
 }
 ```
@@ -113,7 +113,7 @@ preload () {
 }
 
 create() {
-  this.introSoundObject = this.SoundA11yPlugin.addSound('voice', 'intro');
+  this.introSoundObject = this.SoundA11yPlugin.add('voice', 'intro');
   this.introSoundObject.addMarker({name: "intro_start", start: 0, duration: 3});
   this.introSoundObject.addMarker({name: "intro_beakers_exploded", start: 3, duration: 2});
   this.introSoundObject.addMarker({name: "intro_slime_everywhere", start: 5, duration: 2.9});
@@ -130,7 +130,7 @@ preload () {
 }
 
 create() {
-  this.introSoundObject = this.SoundA11yPlugin.addSound('voice', 'intro');
+  this.introSoundObject = this.SoundA11yPlugin.add('voice', 'intro');
   this.introSoundObject.addMarker({name: "intro_start", start: 0, duration: 3});
   this.introSoundObject.addMarker({name: "intro_beakers_exploded", start: 3, duration: 2});
   this.introSoundObject.addMarker({name: "intro_slime_everywhere", start: 5, duration: 2.9});
@@ -162,7 +162,7 @@ this.SoundA11yPlugin.stop("voice");
 | method | parameter type| parameter description |  returns | description |
 |---|---|---|---|---|
 | init | config\<object> | [see example, #4](#plugin-installation) | undefined | initializes the plugin with config settings|
-| addSound | channel\<string> , key\<string>, [phaserSoundConfig\<object>](https://photonstorm.github.io/phaser3-docs/Phaser.Types.Sound.html#.SoundConfig) | the sound channel, Phaser sound key, Phaser sound object config| [Phaser Sound Object](https://photonstorm.github.io/phaser3-docs/Phaser.Sound.BaseSound.html) | stops specified sounds channel|
+| add | channel\<string> , key\<string>, [phaserSoundConfig\<object>](https://photonstorm.github.io/phaser3-docs/Phaser.Types.Sound.html#.SoundConfig) | the sound channel, Phaser sound key, Phaser sound object config| [Phaser Sound Object](https://photonstorm.github.io/phaser3-docs/Phaser.Sound.BaseSound.html) | stops specified sounds channel|
 | play | [soundObject\<object>](https://photonstorm.github.io/phaser3-docs/Phaser.Sound.BaseSound.html) | [Phaser sound object](https://photonstorm.github.io/phaser3-docs/Phaser.Sound.BaseSound.html) | promise | plays phaser sound audio|
 | stop | channel\<string> | valid options are "sound", "music", "voice" | undefined | stops specified sounds channel|
 

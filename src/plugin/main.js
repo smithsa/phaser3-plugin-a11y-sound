@@ -38,7 +38,7 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
         this.scene = undefined;
     }
 
-    addSound(channel, name, config={}) {
+    add(channel, name, config={}) {
       return this.game.sound[channel].add(name, config);
     }
 
