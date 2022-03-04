@@ -20,7 +20,7 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
       this.captions = configData.captions || {};
       this.game.sound.music.setVolume(configData?.volume?.music || .2);
       this.game.sound.sfx.setVolume(configData?.volume?.sfx || .5);
-      this.game.sound.voice.setVolume(configData?.volume?.voice || .5);
+      this.game.sound.voice.setVolume(configData?.volume?.voice || 1);
     }
 
     //  Called when the Plugin is booted by the PluginManager.

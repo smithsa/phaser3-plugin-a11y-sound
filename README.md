@@ -29,7 +29,7 @@ Usage can be seen in the demo folder.
 
 ### Plugin Installation
 1. Import the SoundA11yPlugin plugin
-   `import SoundA11yPlugin from "../plugin/main"`
+   `import SoundA11yPlugin from "phaser3-plugin-sound-a11y"`
 
 2. Ensure your game config has the `parent` and `dom` fields set.
 [See Phaser API docs for game config for more information.](https://newdocs.phaser.io/docs/3.52.0/Phaser.Types.Core.GameConfig)
@@ -76,7 +76,7 @@ this.SoundA11yPlugin.init({
 | modalX | integer | false |500| y position of the options modal |
 | modalY | integer | false |100| x position of the options modal  |
 | primaryColor | string | false |"#0d68c2"| primary accent color for the options modal, takes hex or web safe color  |
-| volume | object | false | { music: .2, voice: .5, sfx: .5} | volume setting for each sound channel |
+| volume | object | false | { music: .2, voice: 1, sfx: .5} | volume setting for each sound channel |
 
 ### Plugin Usage
 
