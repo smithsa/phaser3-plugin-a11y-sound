@@ -15,8 +15,11 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
       const modalY = configData.modalY || 100;
       const primaryColor = configData.primaryColor || "#0d68c2";
       this._addOptionsUIElements(modalX, modalY, primaryColor);
+      const captionsOn = configData.captionsOn || false;
       const captions = configData.captions || {};
       this.game.registry.set("captions", captions);
+      this.game.registry.set("activeCaptions", []);
+      this.game.registry.set("captionsOn", captionsOn);
       this.game.sound.music.setVolume(configData?.volume?.music || .2);
       this.game.sound.sfx.setVolume(configData?.volume?.sfx || .5);
       this.game.sound.voice.setVolume(configData?.volume?.voice || 1);

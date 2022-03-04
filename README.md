@@ -65,7 +65,8 @@ this.SoundA11yPlugin.init({
   captions: captions,
   modalX: 500,
   modalY: 100,
-  primaryColor: "green", 
+  primaryColor: "green",
+  captionsOn: true,
   volume: {
     music: 1,
     sfx: 1,
@@ -76,6 +77,7 @@ this.SoundA11yPlugin.init({
 | name | type | required | default | description  |
 |---|---|---|---|---|
 | captions | object | false |{}| an object with sound names and markers as keys and the values are the caption cues  |
+| captionsOn | boolean | false |false| boolean that indicates if captions are on  |
 | modalX | integer | false |500| y position of the options modal |
 | modalY | integer | false |100| x position of the options modal  |
 | primaryColor | string | false |"#0d68c2"| primary accent color for the options modal, takes hex or web safe color  |
