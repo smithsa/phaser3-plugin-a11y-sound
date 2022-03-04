@@ -19,10 +19,10 @@ export default class Demo extends Phaser.Scene {
     }
 
     create() {
-      this.titleSoundObject = this.SoundA11yPlugin.addVoiceSound('title');
-      this.introSoundObject = this.SoundA11yPlugin.addVoiceSound('intro');
-      this.bgMusicSoundObject = this.SoundA11yPlugin.addMusicSound('bgmusic');
-      this.splatSoundObject = this.SoundA11yPlugin.addSFXSound('splat');
+      this.titleSoundObject = this.SoundA11yPlugin.addSound('voice', 'title');
+      this.introSoundObject = this.SoundA11yPlugin.addSound('voice', 'intro');
+      this.bgMusicSoundObject = this.SoundA11yPlugin.addSound('music', 'bgmusic');
+      this.splatSoundObject = this.SoundA11yPlugin.addSound('sfx', 'splat');
 
       this.introSoundObject.addMarker({name: "intro_start", start: 0, duration: 3});
       this.introSoundObject.addMarker({name: "intro_beakers_exploded", start: 3, duration: 2});
@@ -53,7 +53,7 @@ export default class Demo extends Phaser.Scene {
       });
 
       new Button(800, 700, 'Stop all sound', this, () => {
-        this.SoundA11yPlugin.stopAll();
+        this.SoundA11yPlugin.stop("music");
       });
     }
 

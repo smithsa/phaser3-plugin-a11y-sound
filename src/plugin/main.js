@@ -30,53 +30,7 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
       this._registerSoundChannels();
       this._buildRegistry();
       this._injectCaptionCSS();
-      /*
-          List of unused eventEmitters to activate matching methods of this plugin
-      */
-
-     // eventEmitter.on('start', this.start, this);
-
-      //eventEmitter.on('preupdate', this.preUpdate, this);
-      //eventEmitter.on('postupdate', this.postUpdate, this);
-
-      //eventEmitter.on('pause', this.pause, this);
-      //eventEmitter.on('resume', this.resume, this);
-
-      //eventEmitter.on('sleep', this.sleep, this);
-      //eventEmitter.on('wake', this.wake, this);
-
-      //eventEmitter.on('shutdown', this.shutdown, this);
-      // eventEmitter.on('start', this.install, this);
     }
-
-    //  Called when a Scene is started by the SceneManager. The Scene is now active, visible and running.
-    start() {
-
-    }
-
-    //  Called every Scene step - phase 1
-    preUpdate(time, delta) {}
-
-    //  Called every Scene step - phase 2
-    update(time, delta) {}
-
-    //  Called every Scene step - phase 3
-    postUpdate(time, delta) {}
-
-    //  Called when a Scene is paused. A paused scene doesn't have its Step run, but still renders.
-    pause() {}
-
-    //  Called when a Scene is resumed from a paused state.
-    resume() {}
-
-    //  Called when a Scene is put to sleep. A sleeping scene doesn't update or render, but isn't destroyed or shutdown. preUpdate events still fire.
-    sleep() {}
-
-    //  Called when a Scene is woken from a sleeping state.
-    wake() {}
-
-    //  Called when a Scene shuts down, it may then come back again later (which will invoke the 'start' event) but should be considered dormant.
-    shutdown() {}
 
     //  Called when a Scene is destroyed by the Scene Manager. There is no coming back from a destroyed Scene, so clear up all resources here.
     destroy() {
@@ -84,35 +38,22 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
         this.scene = undefined;
     }
 
-    addVoiceSound(name) {
-      return this.game.sound.voice.add(name);
+    addSound(channel, name, config={}) {
+      return this.game.sound[channel].add(name, config);
     }
 
-    addSFXSound(name) {
-      return this.game.sound.sfx.add(name);
-    }
+    stop(channel=null) {
+      if(channel != null) {
+        this.game.sound[channel].stopAll();
 
-    addMusicSound(name) {
-      return this.game.sound.music.add(name);
-    }
+        if(channel != "music") this._removeCaptions();
 
-    stopVoice() {
-      this.game.sound.voice.stopAll();
-    }
-
-    stopSFX() {
-      this.game.sound.sfx.stopAll();
-    }
-
-    stopMusic() {
-      this.game.sound.music.stopAll();
-    }
-
-    stopAll() {
-      this.stopMusic();
-      this.stopSFX();
-      this.stopVoice();
-      this._removeCaptions();
+      } else {
+        this.game.sound.music.stopAll();
+        this.game.sound.sfx.stopAll();
+        this.game.sound.voice.stopAll();
+        this._removeCaptions();
+      }
     }
 
     play(soundObject, marker=null, config={}) {
@@ -223,7 +164,7 @@ export default class SoundA11yPlugin extends Phaser.Plugins.ScenePlugin {
       }
 
       this.scene.add.dom(this.game.config.width/2, this.game.config.height-this.captionBottomOffset,
-        captionHtmlElement.element).setOrigin(.5, 1);
+        captionHtmlElement.element).setOrigin(.5, 1).setDepth(900);
 
       return captionHtmlElement.element;
     }
