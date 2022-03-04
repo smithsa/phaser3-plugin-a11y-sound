@@ -103,6 +103,39 @@ create() {
 }
 ```
 
+#### Adding Sounds with markers to a Channel
+```javascript
+preload () {
+  this.load.audio('title', '[your path to tile audio]');
+}
+
+create() {
+  this.introSoundObject = this.SoundA11yPlugin.addSound('voice', 'intro');
+  this.introSoundObject.addMarker({name: "intro_start", start: 0, duration: 3});
+  this.introSoundObject.addMarker({name: "intro_beakers_exploded", start: 3, duration: 2});
+  this.introSoundObject.addMarker({name: "intro_slime_everywhere", start: 5, duration: 2.9});
+  this.introSoundObject.addMarker({name: "intro_slime_expanding", start: 7.9, duration: 5.3});
+  this.introSoundObject.addMarker({name: "intro_end", start: 13.2, duration: 2});
+  this.SoundA11yPlugin.play(introSoundObject);
+}
+```
+
+#### Playing a sound with a marker
+```javascript
+preload () {
+  this.load.audio('title', '[your path to tile audio]');
+}
+
+create() {
+  this.introSoundObject = this.SoundA11yPlugin.addSound('voice', 'intro');
+  this.introSoundObject.addMarker({name: "intro_start", start: 0, duration: 3});
+  this.introSoundObject.addMarker({name: "intro_beakers_exploded", start: 3, duration: 2});
+  this.introSoundObject.addMarker({name: "intro_slime_everywhere", start: 5, duration: 2.9});
+  this.introSoundObject.addMarker({name: "intro_slime_expanding", start: 7.9, duration: 5.3});
+  this.introSoundObject.addMarker({name: "intro_end", start: 13.2, duration: 2});
+}
+```
+
 #### Stopping All Sound Channels
 ```javascript
 this.SoundA11yPlugin.stop();
@@ -122,15 +155,39 @@ this.SoundA11yPlugin.stop("sound");
 this.SoundA11yPlugin.stop("voice");
 ```
 
-
 ### Plugin Methods
 | method | parameter type| parameter description |  returns | description |
 |---|---|---|---|---|
-| init | config\<object> | [see example, #4](###Plugin Installation) | undefined | initializes the plugin with config settings|
+| init | config\<object> | [see example, #4](#plugin-installation) | undefined | initializes the plugin with config settings|
 | addSound | channel\<string> , key\<string>, [phaserSoundConfig\<object>](https://photonstorm.github.io/phaser3-docs/Phaser.Types.Sound.html#.SoundConfig) | the sound channel, Phaser sound key, Phaser sound object config| [Phaser Sound Object](https://photonstorm.github.io/phaser3-docs/Phaser.Sound.BaseSound.html) | stops specified sounds channel|
 | play | [soundObject\<object>](https://photonstorm.github.io/phaser3-docs/Phaser.Sound.BaseSound.html) | [Phaser sound object](https://photonstorm.github.io/phaser3-docs/Phaser.Sound.BaseSound.html) | promise | plays phaser sound audio|
 | stop | channel\<string> | valid options are "sound", "music", "voice" | undefined | stops specified sounds channel|
 
+
+## Captioning
+
+### File structure example
+The keys are the sound name given to a Phaser sound object or it can be a marker on a Phaser sound object
+```json
+{
+  "title": "Toxic Slime Sweep",
+  "intro_start": "Yikes, there was an accident in Laboratory X",
+  "intro_beakers_exploded": "all the beakers exploded",
+  "intro_slime_everywhere": "and spilled toxic slime everywhere",
+  "intro_slime_expanding": "the slime is expanding quickly, solve the multiplication problems to clean up the slime",
+  "intro_end": "and save the laboratory!"
+}
+```
+
+### Importing captions
+It's recommended to store your captions in a json file and then import them.
+
+```javascript
+import captions from './captions.json';
+this.SoundA11yPlugin.init({
+  captions: captions,
+});
+```
 
 ## Built With
 * [Phaser 3](https://phaser.io/phaser3)
