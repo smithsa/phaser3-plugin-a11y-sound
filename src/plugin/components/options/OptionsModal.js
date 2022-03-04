@@ -177,7 +177,7 @@ export default class OptionsModal extends HTMLElement {
         const newVolume = window.esparkGame.sound[channel].volume;
         slider.setAttribute("value", newVolume);
         clearTimeout(delay);
-      }, 2000);
+      }, 1000);
     });
   }
 
